@@ -1,0 +1,57 @@
+    .bookshelf {
+        flex: 1;
+
+        background-color: rgba(58, 58, 58, 0.8);
+        border-radius: 10px;
+        margin-bottom: 2%;
+        width: 100%;
+        height: 30%;
+        box-shadow: inset 0 0 10px 0 rgba(0, 0, 0, 0.5);
+        white-space: nowrap;
+        border: 1px black;
+
+        overflow-x: auto;
+        overflow-y: hidden;
+
+        -webkit-user-select: none; /* Safari */
+        -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none;
+        scroll-behavior: smooth;
+    }
+
+    .bookshelf::-webkit-scrollbar {
+        width: 3px; /* Adjust the width as desired */
+        height: 5px;
+    }
+
+    .bookshelf::-webkit-scrollbar-thumb {
+        background-color: rgba(107, 107, 107, 0.8); /* Adjust the thumb color */
+        border-radius: 4px; /* Adjust the thumb border radius */
+        height: 3px;
+    }
+
+    .book {
+        display: inline-block;
+        position: relative;
+        flex: 1;
+        margin-left: 10px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+        border-radius: 10px;
+        width: 8%;
+        height: 100%;
+        background-color: white;
+    }
+
+    .book-title {
+        position: absolute;
+        bottom: 0;
+        left: 0; 
+        width: 100%;
+        height: 20%;
+        background-color: rgba(0, 0, 0, 0.5); 
+        color: rgb(255, 255, 255);
+        padding: 5px; 
+        box-sizing: border-box; 
+        overflow: hidden;
+    }

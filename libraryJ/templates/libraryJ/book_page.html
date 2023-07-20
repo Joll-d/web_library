@@ -1,0 +1,156 @@
+{% load static %}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+      integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+
+<link rel="stylesheet" href="{% static 'libraryJ/styles/bookshelf.css' %}">
+<link rel="stylesheet" href="{% static 'libraryJ/styles/containers.css' %}">
+<script src="{% static 'libraryJ/js/bookshelf.js' %}"></script>
+
+<style>
+    .background {
+        z-index: -1;
+        position: fixed;
+        background-image: url('{% static "libraryJ/images/background_image.jpg" %}');
+        background-size: cover;
+        height: 100vh;
+        width: 100vw;
+    }
+
+    .buttons-menu {
+        position: absolute;
+        min-height: 10px;
+        min-width: 50px;
+        height: auto;
+        width: auto;
+        background-color: rgba(58, 58, 58, 0.8);
+        border-radius: 0 0 10px 0;
+
+        text-align: center;
+
+        -webkit-user-select: none; /* Safari */
+        -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none;
+    }
+
+    a {
+        color: inherit;
+    }
+
+    .book-menu {
+        width: 100%;
+        height: 5vh;
+    }
+
+    .content-block {
+        width: 100%;
+        min-height: 65vh;
+    }
+
+    .page-title {
+        left: 0;
+        right: 0;
+        margin-left:auto;
+        margin-right: auto;
+        margin-top: 10px;
+        color: white;
+        font-size: 25;
+    }
+
+    .content-text {
+        color: white;
+        word-wrap: break-word;
+        text-indent: 20px;
+    }
+
+    body::-webkit-scrollbar {
+        width: 5px; /* Adjust the width as desired */
+        height: 5px;
+        background-color: rgba(107, 107, 107, 1);;
+    }
+
+    body::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.5); /* Adjust the thumb color */
+        border-radius: 4px; /* Adjust the thumb border radius */
+        height: 3px;
+    }
+</style>
+
+<script>
+    function translateParagraph(paragraph_en, paragraph_ru, id){
+        const paragraph = document.getElementById('paragraph' + id);
+        if(paragraph.classList.contains("en")){
+            paragraph.textContent = paragraph_ru;
+            paragraph.classList.add("ru")
+            paragraph.classList.remove("en")
+        }else if(paragraph.classList.contains("ru")){
+            paragraph.textContent = paragraph_en;
+            paragraph.classList.add("en")
+            paragraph.classList.remove("ru")
+        }
+    }
+</script>
+
+
+<div class="background top left"></div>
+
+<div>
+    <div class="main-block container">
+        <div class="container-inner">
+            <div class="book-menu top">
+                <div class="d-flex justify-content-center">
+                    <form method="post" action="change-book-page">
+                        {% csrf_token %}
+                        <input type="hidden" name="next_chapter" value="{{ previous_chapter }}">
+                        <button type="submit" class="btn btn-outline-warning" style="width: 100px">Previous</button>
+                    </form>
+                    <div style="width: 10px"></div>
+                    <a href="../">
+                        <button type="button" class="btn btn-outline-warning" style="width: 100px">Index</button>
+                    </a>
+                    <div style="width: 10px"></div>
+                    <form method="post" action="change-book-page">
+                        {% csrf_token %}
+                        <input type="hidden" name="next_chapter" value="{{ next_chapter }}">
+                        <button type="submit" class="btn btn-outline-warning" style="width: 100px">Next</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="content-block">
+                <div class="page-title d-flex justify-content-center">     
+                    {{ chapter_title }}
+                </div>
+                {% for paragraph_en, paragraph_ru in chapter_content %}
+                    <div onclick="translateParagraph('{{ paragraph_en|escapejs|safe }}', '{{ paragraph_ru|escapejs|safe }}', '{{ forloop.counter }}')">
+                        <p id="paragraph{{ forloop.counter }}" class="content-text en">
+                            {{ paragraph_en }}
+                        </p>
+                    </div>
+                {% endfor %}
+
+            </div>
+
+            <div class="book-menu bottom">
+                <div class="d-flex justify-content-center">
+                    <form method="post" action="change-book-page">
+                        {% csrf_token %}
+                        <input type="hidden" name="next_chapter" value="{{ previous_chapter }}">
+                        <button type="submit" class="btn btn-outline-warning" style="width: 100px">Previous</button>
+                    </form>
+                    <div style="width: 10px"></div>
+                    <a href="../">
+                        <button type="button" class="btn btn-outline-warning" style="width: 100px">Index</button>
+                    </a>
+                    <div style="width: 10px"></div>
+                    <form method="post" action="change-book-page">
+                        {% csrf_token %}
+                        <input type="hidden" name="next_chapter" value="{{ next_chapter }}">
+                        <button type="submit" class="btn btn-outline-warning" style="width: 100px">Next</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
