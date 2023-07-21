@@ -37,8 +37,10 @@ class AddBookView(generic.ListView):
             return redirect("/add-website")
         else:
             book_title_link = get_book_title_link(book_link, website.book_title_page_length) + website.book_title_page_link_supplement
-            book_title = get_book_title(book_title_link, website.book_title_path)
-            art_link = get_image_src(book_title_link, website.art_path)
+
+            parser = BookParser(book_title_link)
+            book_title = parser.get_element_text(website.book_title_path)
+            art_link = parser.get_element_src(website.art_path)
             book = Book.objects.create(
                 Website = website,
                 book_title = book_title,
@@ -60,11 +62,12 @@ class BookPageView(generic.DetailView):
         chapter_link = book.last_page_link
         website = book.Website
         
-        chapter_title = get_chapter_title(chapter_link, website.chapter_title_path)
-        chapter_content = get_chapter_content(chapter_link, website.content_path)
+        parser = BookParser(chapter_link)
+        chapter_title = parser.get_element_text(website.chapter_title_path)
+        chapter_content = parser.get_elements_text(website.content_path)
     
-        previous_chapter = get_page_link(chapter_link, website.previous_book_page_link_path)
-        next_chapter = get_page_link(chapter_link, website.next_book_page_link_path)
+        previous_chapter = parser.get_element_href(website.previous_book_page_link_path)
+        next_chapter = parser.get_element_href(website.next_book_page_link_path)
 
         translator_en = Translator('en')
         chapter_title_en = translator_en.translate(chapter_title)
@@ -85,8 +88,10 @@ class BookPageView(generic.DetailView):
         book = self.get_object()
         
         book_link = request.POST.get("next_chapter")
-        book.last_page_link = book_link
-        book.save()
+
+        if book_link != 'None':
+            book.last_page_link = book_link
+            book.save()
 
         return redirect(f"/{book.pk}/")
 
@@ -113,7 +118,9 @@ class WebsiteView(generic.ListView):
         next_book_page_link_path = request.POST.get('nextBookPageLink')
         previous_book_page_link_path = request.POST.get('previousBookPageLink')
 
-        if 200 != (status_code:=(get_website_status_code(website_link))):
+        parser = BookParser(website_link)
+
+        if 200 != (status_code:=(parser.get_website_status_code())):
             return HttpResponseBadRequest("Your error message here: " + str(status_code))
         
         website_domain = get_domain_from_link(website_link)
@@ -121,7 +128,7 @@ class WebsiteView(generic.ListView):
         website = find_website_by_domain(website_domain)
         website_name = get_website_name_from_link(website_link)
 
-        image_link = get_website_image_src(website_link)
+        image_link = parser.get_website_icon_src()
 
         book_title_page_link_supplement = get_book_title_page_link_supplement(book_title_page_link, book_chapter_page_link)
 

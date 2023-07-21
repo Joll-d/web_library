@@ -3,138 +3,126 @@ import chardet
 
 from bs4 import BeautifulSoup as BS
 
-def get_website_image_src(website_link: str) -> str:
-    r = requests.get(website_link)
-    soup = BS(r.text, 'html.parser')
-    icon_link = soup.find("link", rel="shortcut icon")
-    if icon_link is None:
-        icon_link = soup.find("link", rel="icon")
-    website_image_src = icon_link.get("href")
-    return website_image_src
 
-def get_website_status_code(website_link: str) -> int:
-    try:
-        r = requests.get(website_link)
-        status_code = r.status_code
-    except:
-        status_code = 404
-    return status_code
+class BookParser:
 
-def get_book_title(book_title_link: str, book_title_path: str) -> str:
-    book_title_path = book_title_path.split(";")
+    def __init__(self, website_link) -> None:
+        self._website_link = website_link
+     
+    def get_website_icon_src(self) -> str:
+        r = requests.get(self._website_link)
+        soup = BS(r.text, 'html.parser')
+        icon_link = soup.find("link", rel="shortcut icon")
+        if icon_link is None:
+            icon_link = soup.find("link", rel="icon")
+        website_image_src = self._get_full_url(icon_link.get("href"))
+        return website_image_src
 
-    r = requests.get(book_title_link)
-    detected_encoding = chardet.detect(r.content)["encoding"]
-    r.encoding = detected_encoding
-    html = BS(r.text, 'html.parser')
+    def get_website_status_code(self) -> int:
+        try:
+            r = requests.get(self._website_link)
+            status_code = r.status_code
+        except:
+            status_code = 404
+        return status_code
 
-    element = html
+    def get_element_text(self, book_title_path: str) -> str:
+        book_title_path = book_title_path.split(";")
 
-    for element_path in book_title_path:
-        element_path = element_path.lstrip()
-        element_path = element_path.split(" ")
-        element_selector = element_path[0]
-        element_class = element_path[1] if len(element_path) == 2 else ""
-        element = element.find(element_selector[1:-1], class_=element_class)
+        r = requests.get(self._website_link)
+        detected_encoding = chardet.detect(r.content)["encoding"]
+        r.encoding = detected_encoding
+        html = BS(r.text, 'html.parser')
 
-    return element.text
+        element = self._get_element_by_path(html, book_title_path)
 
-def get_image_src(book_title_link: str, art_path: str) -> str:
-    art_path = art_path.split(";")
+        return element.text
 
-    r = requests.get(book_title_link)
-    detected_encoding = chardet.detect(r.content)["encoding"]
-    r.encoding = detected_encoding
-    html = BS(r.text, 'html.parser')
+    def get_element_src(self, element_path: str) -> str:
+        element_path = element_path.split(";")
 
-    element = html
+        r = requests.get(self._website_link)
+        detected_encoding = chardet.detect(r.content)["encoding"]
+        r.encoding = detected_encoding
+        html = BS(r.text, 'html.parser')
 
-    for element_path in art_path:
-        element_path = element_path.lstrip()
-        element_path = element_path.split(" ")
-        element_selector = element_path[0]
-        element_class = element_path[1] if len(element_path) == 2 else ""
-        element = element.find(element_selector[1:-1], class_=element_class)
+        element = self._get_element_by_path(html, element_path)
 
-    return element.get('src')
+        return element.get('src')
 
+    def get_elements_text(self, parent_element_path: str) -> list:
+        parent_element_path = parent_element_path.split(";")
 
-def get_chapter_title(chapter_link: str, chapter_title_path: str) -> str:
-    chapter_title_path = chapter_title_path.split(";")
+        r = requests.get(self._website_link)
+        detected_encoding = chardet.detect(r.content)["encoding"]
+        r.encoding = detected_encoding
+        html = BS(r.text, 'html.parser')
 
-    r = requests.get(chapter_link)
-    detected_encoding = chardet.detect(r.content)["encoding"]
-    r.encoding = detected_encoding
-    html = BS(r.text, 'html.parser')
+        element = self._get_element_by_path(html, parent_element_path)
 
-    element = html
-
-    for element_path in chapter_title_path:
-        element_path = element_path.lstrip()
-        element_path = element_path.split(" ")
-        element_selector = element_path[0]
-        element_class = element_path[1] if len(element_path) == 2 else ""
-        element = element.find(element_selector[1:-1], class_=element_class)
-
-    chapter_title = element.text
-    return chapter_title
-
-
-def get_chapter_content(chapter_link: str, content_path: str) -> list:
-    splited_content_path = content_path.split(";")
-    content_path = splited_content_path[:-1]
-
-    paragraph_separator = splited_content_path[-1].split(":")
-
-    r = requests.get(chapter_link)
-    detected_encoding = chardet.detect(r.content)["encoding"]
-    r.encoding = detected_encoding
-    html = BS(r.text, 'html.parser')
-
-    element = html
-
-    for element_path in content_path:
-        element_path = element_path.lstrip()
-        element_path = element_path.split(" ")
-        element_selector = element_path[0]
-        element_class = element_path[1] if len(element_path) == 2 else ""
-        element = element.find(element_selector[1:-1], class_=element_class)
-
-    separator_type = paragraph_separator[0].strip()
-    separator_selector = paragraph_separator[1].strip()
-    content =[]
-    if separator_type == 'block':
-        content = element.find_all(separator_selector)
-    elif separator_type == 'spacer':
         content = list(element.stripped_strings)
+        return content
 
-    return content
+    def get_element_href(self, element_href_path: str) -> str:
+        element_href_path = element_href_path.split(";")
+
+        r = requests.get(self._website_link)
+        detected_encoding = chardet.detect(r.content)["encoding"]
+        r.encoding = detected_encoding
+        html = BS(r.text, 'html.parser')
+
+        element = self._get_element_by_path(html, element_href_path)
+
+        if element is None:
+            return element
+        else:
+            book_page_link = self._get_full_url(element.get('href'))
+        return book_page_link
+           
+    def _get_element_orderly_number(self, element_class: str) -> tuple[str, int]:
+        element_orderly_number = 0
+
+        if element_class.find('[') != -1:
+            element_orderly_number_coordinates = [element_class.find('['), element_class.find(']')]
+            element_orderly_number = int(element_class[element_orderly_number_coordinates[0]+1:element_orderly_number_coordinates[1]])
+            element_class = element_class.replace(f'[{element_orderly_number}]', '')
+
+        return element_class.strip(), element_orderly_number
+
+    def _get_element_by_path(self, html: BS, element_full_path: list) -> BS:
+        element = html
+        element_full_path = [element.strip() for element in element_full_path]
+
+        for element_path in element_full_path:
+            element_selector_end = element_path.find(" ")
+            element_selector = element_path[1:element_selector_end-1] if element_selector_end != -1 else element_path[1:-1]
+            element_class = element_path[element_selector_end:].strip() if element_selector_end != -1 else ""
+
+            element_class, element_orderly_number = self._get_element_orderly_number(element_class)
+
+            optional = False
+            if element_class.find('`OP') != -1:
+                element_class = element_class.replace('`OP', '').strip()
+                optional = True
+
+            try:
+                if element_class == '':
+                    element = element.find_all(element_selector)
+                else:
+                    element = element.find_all(element_selector, class_=element_class)
+                
+                element = element[element_orderly_number]
+            except:
+                if optional:
+                    return None
 
 
-def get_page_link(chapter_link: str, book_page_link_path: str) -> str:
-    splited_book_page_link_path = book_page_link_path.split(";")
-    book_page_link_path = splited_book_page_link_path[:-1]
-    link_path = splited_book_page_link_path[-1].strip().split(" ")
+        return element
 
-    r = requests.get(chapter_link)
-    detected_encoding = chardet.detect(r.content)["encoding"]
-    r.encoding = detected_encoding
-    html = BS(r.text, 'html.parser')
-
-    element = html
-
-    for element_path in book_page_link_path:
-        element_path = element_path.lstrip()
-        element_path = element_path.split(" ")
-        element_selector = element_path[0]
-        element_class = element_path[1] if len(element_path) == 2 else ""
-        element = element.find(element_selector[1:-1], class_=element_class)
-
-    button_selector = link_path[0].strip()
-    button_iterator = link_path[1].strip()
-    button_iterator = int(button_iterator[1:-1])
-    elements = element.find_all(button_selector[1:-1])
-    element = elements[button_iterator-1]
-
-    book_page_link = element.get('href')
-    return book_page_link
+    def _get_full_url(self, shortened_url: str):
+        url = shortened_url
+        if shortened_url.find('://') == -1:
+            domain_start = self._website_link.find("://") + 3
+            domain_end = self._website_link.find("/", domain_start)
+            url = self._website_link[:domain_end] + shortened_url
+        return url
