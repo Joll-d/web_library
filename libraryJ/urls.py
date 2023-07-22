@@ -9,5 +9,6 @@ urlpatterns = [
     path('add-website/', views.WebsiteView.as_view(), name='post_website'),
     path('<int:pk>/', views.BookPageView.as_view(), name='book_page'),
     path('<int:pk>/change-book-page', views.BookPageView.as_view(), name='change_book_page'),
+    path('book/<int:pk>/delete', views.BookDeleteView.as_view(), name='delete_book_page'),
     path('', views.IndexView.as_view(), name='index'),
 ]
