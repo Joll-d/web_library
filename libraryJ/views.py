@@ -50,11 +50,17 @@ class AddBookView(generic.ListView):
             )
             return redirect("../")
 
-
+          
 class BookIndexView(generic.DetailView):
     model = Book
     template_name = 'libraryJ/book_home_page.html'
     context_object_name = 'book'
+
+    
+class BookDeleteView(generic.DetailView):
+    model = Book
+    template_name = '/'
+    success_url = '../'
 
 
 class BookPageView(generic.DetailView):
