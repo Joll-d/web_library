@@ -51,6 +51,12 @@ class AddBookView(generic.ListView):
             return redirect("../")
 
 
+class BookIndexView(generic.DetailView):
+    model = Book
+    template_name = 'libraryJ/book_home_page.html'
+    context_object_name = 'book'
+
+
 class BookPageView(generic.DetailView):
     model = Book
     template_name = 'libraryJ/book_page.html'
@@ -93,7 +99,7 @@ class BookPageView(generic.DetailView):
             book.last_page_link = book_link
             book.save()
 
-        return redirect(f"/{book.pk}/")
+        return redirect(f"../chapter")
 
 
 class WebsiteView(generic.ListView):
