@@ -49,7 +49,7 @@
 
             <div class="bookshelf" onwheel="scrollBookshelf(event)">
                 {% for book in books %}
-                    <a href="{{ book.id }}">
+                    <a href="book/{{ book.id }}">
                         <div class="book">
                             <img src="{{ book.art_link }}" style="height: 100%; width: 100%;">
                             <div class="book-title">{{ book.book_title }}</div>
