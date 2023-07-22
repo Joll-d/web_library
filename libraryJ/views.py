@@ -59,6 +59,22 @@ class BookIndexView(generic.DetailView):
     template_name = 'libraryJ/book_home_page.html'
     context_object_name = 'book'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        book = self.get_object()
+        chapter_link = book.last_page_link
+        website = book.Website
+
+        description_en = 'None'
+        if website.book_description_path != '':
+            book_title_link = get_book_title_link(chapter_link, website.book_title_page_length) + website.book_title_page_link_supplement
+            parser = BookParser(book_title_link)
+            description_en = parser.get_elements_text(website.book_description_path)
+            print(description_en)
+        print(description_en, website.book_description_path)
+        context['description_en'] = description_en
+        return context
+
 
 class BookDeleteView(generic.DetailView):
     model = Book
@@ -184,3 +200,19 @@ class WebsiteView(generic.ListView):
             website.save()
 
         return redirect("../")
+
+
+class WebsiteUpdateView(generic.UpdateView):
+    model = Website
+    fields = ["book_description_path"]
+
+    def post(self, request, *args, **kwargs):
+        website = self.get_object()
+        book_description_path = request.POST.get('bookDescriptionPath')
+
+        if book_description_path is not None:
+            website.book_description_path = book_description_path
+
+        website.save()
+
+        return redirect('../../')

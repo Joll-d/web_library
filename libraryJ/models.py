@@ -9,6 +9,8 @@ class Website(models.Model):
     book_title_path = models.CharField(max_length=200)
     chapter_title_path = models.CharField(max_length=200)
 
+    book_description_path = models.CharField(max_length=200, default='')
+
     content_path = models.CharField(max_length=200)
 
     next_book_page_link_path = models.CharField(max_length=200)
