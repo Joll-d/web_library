@@ -66,7 +66,9 @@ class BookDeleteView(generic.DetailView):
 
     def post(self, request, *args, **kwargs):
         book = self.get_object()
-        book.delete()
+        confirmation = request.POST.get('deleteConfirmation')
+        if confirmation == 'I am sure':
+            book.delete()
 
         return redirect('../../')
 
