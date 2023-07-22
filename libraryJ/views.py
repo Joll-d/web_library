@@ -71,7 +71,7 @@ class BookIndexView(generic.DetailView):
             parser = BookParser(book_title_link)
             description_en = parser.get_elements_text(website.book_description_path)
             print(description_en)
-        print(description_en, website.book_description_path)
+
         context['description_en'] = description_en
         return context
 
