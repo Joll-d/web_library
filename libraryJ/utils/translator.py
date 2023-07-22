@@ -1,4 +1,5 @@
 from deep_translator import GoogleTranslator
+from langdetect import detect
 import asyncio
 
 class Translator:
@@ -10,14 +11,15 @@ class Translator:
         if isinstance(source_text, str):
             translated_text = self.translate_element(source_text)
         elif isinstance(source_text, list):
-            loop = asyncio.new_event_loop() 
-            asyncio.set_event_loop(loop) 
-
             translated_text = source_text.copy()
-            tasks = [self.translate_element_async(element) for element in source_text]
-            translated_text = loop.run_until_complete(asyncio.gather(*tasks))
+            if detect(source_text[0]) != self.destination_language:
+                loop = asyncio.new_event_loop() 
+                asyncio.set_event_loop(loop) 
 
-            loop.close() 
+                tasks = [self.translate_element_async(element) for element in source_text]
+                translated_text = loop.run_until_complete(asyncio.gather(*tasks))
+
+                loop.close() 
 
         return translated_text
 
