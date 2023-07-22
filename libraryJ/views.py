@@ -5,10 +5,12 @@ from django.http import HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 
+
 from libraryJ.utils.utils import *
 from libraryJ.utils.database_handler import *
 from libraryJ.utils.parser import *
 from libraryJ.utils.translator import *
+from django.contrib import messages
 
 
 class IndexView(generic.ListView):
@@ -36,31 +38,37 @@ class AddBookView(generic.ListView):
         if website is None:
             return redirect("/add-website")
         else:
-            book_title_link = get_book_title_link(book_link, website.book_title_page_length) + website.book_title_page_link_supplement
+            book_title_link = get_book_title_link(
+                book_link, website.book_title_page_length) + website.book_title_page_link_supplement
 
             parser = BookParser(book_title_link)
             book_title = parser.get_element_text(website.book_title_path)
             art_link = parser.get_element_src(website.art_path)
             book = Book.objects.create(
-                Website = website,
-                book_title = book_title,
-                book_link = book_link,
-                last_page_link = book_link,
-                art_link = art_link,
+                Website=website,
+                book_title=book_title,
+                book_link=book_link,
+                last_page_link=book_link,
+                art_link=art_link,
             )
             return redirect("../")
 
-          
+
 class BookIndexView(generic.DetailView):
     model = Book
     template_name = 'libraryJ/book_home_page.html'
     context_object_name = 'book'
 
-    
+
 class BookDeleteView(generic.DetailView):
     model = Book
-    template_name = '/'
     success_url = '../'
+
+    def post(self, request, *args, **kwargs):
+        book = self.get_object()
+        book.delete()
+
+        return redirect('../../')
 
 
 class BookPageView(generic.DetailView):
@@ -73,13 +81,15 @@ class BookPageView(generic.DetailView):
         book = self.get_object()
         chapter_link = book.last_page_link
         website = book.Website
-        
+
         parser = BookParser(chapter_link)
         chapter_title = parser.get_element_text(website.chapter_title_path)
         chapter_content = parser.get_elements_text(website.content_path)
-    
-        previous_chapter = parser.get_element_href(website.previous_book_page_link_path)
-        next_chapter = parser.get_element_href(website.next_book_page_link_path)
+
+        previous_chapter = parser.get_element_href(
+            website.previous_book_page_link_path)
+        next_chapter = parser.get_element_href(
+            website.next_book_page_link_path)
 
         translator_en = Translator('en')
         chapter_title_en = translator_en.translate(chapter_title)
@@ -90,15 +100,16 @@ class BookPageView(generic.DetailView):
         chapter_content_ru = translator_ru.translate(chapter_content)
 
         context['chapter_title'] = chapter_title_en
-        context['chapter_content'] = zip(chapter_content_en, chapter_content_ru)
+        context['chapter_content'] = zip(
+            chapter_content_en, chapter_content_ru)
 
         context['previous_chapter'] = previous_chapter
         context['next_chapter'] = next_chapter
         return context
-    
+
     def post(self, request, *args, **kwargs):
         book = self.get_object()
-        
+
         book_link = request.POST.get("next_chapter")
 
         if book_link != 'None':
@@ -132,9 +143,9 @@ class WebsiteView(generic.ListView):
 
         parser = BookParser(website_link)
 
-        if 200 != (status_code:=(parser.get_website_status_code())):
+        if 200 != (status_code := (parser.get_website_status_code())):
             return HttpResponseBadRequest("Your error message here: " + str(status_code))
-        
+
         website_domain = get_domain_from_link(website_link)
 
         website = find_website_by_domain(website_domain)
@@ -142,10 +153,12 @@ class WebsiteView(generic.ListView):
 
         image_link = parser.get_website_icon_src()
 
-        book_title_page_link_supplement = get_book_title_page_link_supplement(book_title_page_link, book_chapter_page_link)
+        book_title_page_link_supplement = get_book_title_page_link_supplement(
+            book_title_page_link, book_chapter_page_link)
 
-        book_title_page_length = get_book_title_page_length(book_title_page_link)
-        
+        book_title_page_length = get_book_title_page_length(
+            book_title_page_link)
+
         website_data = {
             'name': website_name,
             'website_link': website_link,
@@ -169,4 +182,3 @@ class WebsiteView(generic.ListView):
             website.save()
 
         return redirect("../")
-    

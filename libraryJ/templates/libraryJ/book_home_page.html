@@ -37,10 +37,6 @@ integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4B
         color: inherit;
     }
 
-    .shadow {
-
-    }
-
 </style>
 
 <div class="background top left"></div>
@@ -113,16 +109,19 @@ integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4B
                     <h1 class="modal-title fs-5" id="deleteConfirmationModalLabel">Delete Confirmation</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <label for="websiteLinkInput" class="form-label text-light">Confirmation phrase: "I confirm the deletion of this book"</label>
-                    <input type="text" class="form-control" id="websiteLinkInput" name="websiteLink"
-                            placeholder="{{ website_domain }}" pattern="I confirm the deletion of this book" 
-                            minlength="4" maxlength="200" required>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-danger">Confrim</button>
-                </div>
+                <form method="post" action="delete">{% csrf_token %}
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete "{{ book.book_title }}" id: "{{ book.pk }}"?</p>
+                        <p>Enter: I am sure</p>
+                        <label for="deleteConfirmationInput" class="form-label text-light">Delete Confirmation:</label>
+                        <input type="text" class="form-control" id="deleteConfirmationInput" name="deleteConfirmation"
+                                pattern="I am sure" required>
+                    </div>
+                    <div class="modal-footer">
+                            {{ form }}
+                            <input type="submit" class="btn btn-danger" value="Confirm">
+                    </div>
+                </form>
             </div>
         </div>
     </div>
