@@ -111,7 +111,10 @@
                         </div>
                         <div class="col-md-3 border-bottom border-secondary border-opacity-50 shadow-risen">
                             <div class="row mx-0 gx-0 gy-0 h-50">
-                                <div class="col-md-3 offset-md-9">
+                                <div class="col-md-3 offset-md-6">
+                                    <button id="btnUpdate" class="btn btn-outline-success w-100 h-100 shadow-lg fs-4 overflow-hidden"> U </button>
+                                </div>
+                                <div class="col-md-3">
                                     <button id="btnDelete" class="btn btn-outline-danger w-100 h-100 shadow-lg fs-4 overflow-hidden"
                                         data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal"> D </button>
                                 </div>
@@ -121,11 +124,11 @@
                     <div class="row mx-0 gx-0 gy-0 h-75 align-items-start">
                         <div class="col-md-9 gx-1 gy-2 container-fluid overflow-y-auto mh-100">
                             <div id="bookDescription">
-                                {% if description_en == 'None' %}
+                                {% if description_en.0 == 'None' %}
                                 <div class="row mx-0 gx-0 gy-0 h-50"></div>
                                     <div class="row mx-0 gx-0 gy-0">
                                         <button
-                                            class="btn btn-outline-warning rounded-circle offset-md-5 col-md-2 shadow-lg"
+                                            class="btn btn-outline-warning rounded-2 offset-md-5 col-md-1 shadow-lg"
                                             data-bs-toggle="modal" data-bs-target="#addModal"
                                             data-variable-name="description" onclick="openAddModal(this)">
                                             <h1>+</h1>
@@ -133,16 +136,16 @@
                                     </div>
                                 <div class="row mx-0 gx-0 gy-0"></div>
                                 {% else %}
-                                {% for description_block_en in description_en %}
-                                <p class="text-light ">{{ description_block_en }}</p>
-                                {% endfor %}
+                                    {% for description_block_en in description_en %}
+                                        <p class="text-light ">{{ description_block_en }}</p>
+                                    {% endfor %}
                                 {% endif %}
                             </div>
                         </div>
                         <div class="col-md-3 border-start border-secondary border-opacity-50 shadow-lg ">
                             <div class="row mx-0 gx-0 gy-0 h-75 overflow-y-auto px-2 pt-2">
                                 <div class="col">
-                                    {% if tags == 'None' %}
+                                    {% if tags.0 == 'None' %}
                                         <div class="row mx-0 gx-0 gy-0 h-25"></div>
                                             <div class="row mx-0 gx-0 gy-0">
                                                 <button id="openAddModal" class="btn btn-outline-warning rounded-2 offset-md-5 col-md-3"

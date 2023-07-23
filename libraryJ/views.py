@@ -45,12 +45,30 @@ class AddBookView(generic.ListView):
             parser = BookParser(book_title_link)
             book_title = parser.get_element_text(website.book_title_path)
             art_link = parser.get_element_src(website.art_path)
+            
+            author = 'None'
+            if website.book_author_path != '':
+                author = parser.get_element_text(website.book_author_path)
+            
+            tags = ['None']
+            if website.book_tags_path != '':
+                tags = parser.get_elements_text(website.book_tags_path)
+            
+            description = ['None']
+            if website.book_description_path != '':
+                description = parser.get_elements_text(
+                    website.book_description_path)
+                
             book = Book.objects.create(
                 Website=website,
                 book_title=book_title,
                 book_link=book_link,
                 last_page_link=book_link,
                 art_link=art_link,
+
+                author=author,
+                tags=tags,
+                description=description,
             )
             return redirect("../")
 
@@ -66,19 +84,12 @@ class BookIndexView(generic.DetailView):
         chapter_link = book.last_page_link
         website = book.Website
 
-        book_title_link = get_book_title_link(chapter_link, website.book_title_page_length) + website.book_title_page_link_supplement
-        parser = BookParser(book_title_link)
-        description_en = 'None'
-        if website.book_description_path != '':
-            description_en = parser.get_elements_text(website.book_description_path)
+        book_title_link = get_book_title_link(
+            chapter_link, website.book_title_page_length) + website.book_title_page_link_supplement
 
-        author = 'None'
-        if website.book_author_path != '':
-            author = parser.get_element_text(website.book_author_path)
-
-        tags = 'None'
-        if website.book_tags_path != '':
-            tags = parser.get_elements_text(website.book_tags_path)
+        description_en = book.description
+        author = book.author
+        tags = book.tags
 
         context['description_en'] = description_en
         context['author'] = author
@@ -137,7 +148,7 @@ class BookPageView(generic.DetailView):
 
         book.last_call_time = timezone.now()
         book.save()
-        
+
         return context
 
     def post(self, request, *args, **kwargs):
