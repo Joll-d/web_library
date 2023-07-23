@@ -1,3 +1,4 @@
+from django.urls import reverse_lazy
 from django.views import generic
 from django.http import HttpResponse
 from django.template import loader
@@ -45,20 +46,20 @@ class AddBookView(generic.ListView):
             parser = BookParser(book_title_link)
             book_title = parser.get_element_text(website.book_title_path)
             art_link = parser.get_element_src(website.art_path)
-            
+
             author = 'None'
             if website.book_author_path != '':
                 author = parser.get_element_text(website.book_author_path)
-            
+
             tags = ['None']
             if website.book_tags_path != '':
                 tags = parser.get_elements_text(website.book_tags_path)
-            
+
             description = ['None']
             if website.book_description_path != '':
                 description = parser.get_elements_text(
                     website.book_description_path)
-                
+
             book = Book.objects.create(
                 Website=website,
                 book_title=book_title,
@@ -81,11 +82,6 @@ class BookIndexView(generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         book = self.get_object()
-        chapter_link = book.last_page_link
-        website = book.Website
-
-        book_title_link = get_book_title_link(
-            chapter_link, website.book_title_page_length) + website.book_title_page_link_supplement
 
         description_en = book.description
         author = book.author
@@ -109,6 +105,51 @@ class BookDeleteView(generic.DetailView):
             book.delete()
 
         return redirect('../../')
+
+
+class BookUpdateView(generic.DetailView):
+    model = Book
+    fields = ["book_title", "art_link", "author", "tags", "description"]
+    template_name = "libraryJ/book_home_page.html"
+
+    def post(self, request, *args, **kwargs):
+        book = self.get_object()
+        website = book.Website
+
+        book_title_link = get_book_title_link(
+            book.book_link, website.book_title_page_length) + website.book_title_page_link_supplement
+
+        parser = BookParser(book_title_link)
+
+        PARSING_TYPE_STRING = 'str'
+        PARSING_TYPE_LIST_OF_STRINGS = 'list(str)'
+        PARSING_TYPE_SOURCE = 'src'
+
+        attributes_mapping = {
+            website.book_title_path: ('book_title', PARSING_TYPE_STRING),
+            website.art_path: ('art_link', PARSING_TYPE_SOURCE),
+            website.book_author_path: ('author', PARSING_TYPE_STRING),
+            website.book_tags_path: ('tags', PARSING_TYPE_LIST_OF_STRINGS),
+            website.book_description_path: (
+                'description', PARSING_TYPE_LIST_OF_STRINGS)
+        }
+
+        for path, (attribute, parsing_type) in attributes_mapping.items():
+            if parsing_type == 'str':
+                element_value = parser.get_element_text(path)
+                setattr(book, attribute,
+                        element_value if element_value else 'None')
+            elif parsing_type == 'list(str)':
+                element_values = parser.get_elements_text(path)
+                setattr(book, attribute,
+                        element_values if element_values else ['None'])
+            elif parsing_type == 'src':
+                setattr(book, attribute, parser.get_element_src(
+                    path) if path else 'None')
+
+        book.save()
+
+        return redirect(reverse_lazy('libraryJ:book-home-page', kwargs={'pk': self.kwargs['pk']}))
 
 
 class BookPageView(generic.DetailView):
@@ -187,7 +228,9 @@ class WebsiteView(generic.ListView):
 
         parser = BookParser(website_link)
 
-        if 200 != (status_code := (parser.get_website_status_code())):
+        status_code = parser.get_website_status_code()[0]
+
+        if 200 != status_code:
             return HttpResponseBadRequest("Your error message here: " + str(status_code))
 
         website_domain = get_domain_from_link(website_link)
@@ -230,7 +273,7 @@ class WebsiteView(generic.ListView):
 
 class WebsiteUpdateView(generic.UpdateView):
     model = Website
-    fields = ["book_description_path"]
+    fields = ["book_description_path", "book_author_path", "book_tags_path"]
 
     def post(self, request, *args, **kwargs):
         website = self.get_object()
