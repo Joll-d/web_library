@@ -7,6 +7,8 @@ class Website(models.Model):
     book_title_page_link_supplement = models.CharField(max_length=200, default='')
     
     book_author_path = models.CharField(max_length=200, default='')
+    book_tags_path = models.CharField(max_length=200, default='')
+
     book_title_path = models.CharField(max_length=200)
     chapter_title_path = models.CharField(max_length=200)
 

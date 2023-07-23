@@ -8,7 +8,7 @@ class BookParser:
 
     def __init__(self, website_link) -> None:
         self._website_link = website_link
-     
+
     def get_website_icon_src(self) -> str:
         r = requests.get(self._website_link)
         soup = BS(r.text, 'html.parser')
@@ -58,9 +58,13 @@ class BookParser:
         r.encoding = detected_encoding
         html = BS(r.text, 'html.parser')
 
-        element = self._get_element_by_path(html, parent_element_path)
+        elements = self._get_element_by_path(html, parent_element_path)
 
-        content = list(element.stripped_strings)
+        try:
+            content = list(elements.stripped_strings)
+        except:
+            content = [element.text for element in elements]
+
         return content
 
     def get_element_href(self, element_href_path: str) -> str:
@@ -78,14 +82,17 @@ class BookParser:
         else:
             book_page_link = self._get_full_url(element.get('href'))
         return book_page_link
-           
+
     def _get_element_orderly_number(self, element_class: str) -> tuple[str, int]:
         element_orderly_number = 0
 
         if element_class.find('[') != -1:
-            element_orderly_number_coordinates = [element_class.find('['), element_class.find(']')]
-            element_orderly_number = int(element_class[element_orderly_number_coordinates[0]+1:element_orderly_number_coordinates[1]])
-            element_class = element_class.replace(f'[{element_orderly_number}]', '')
+            element_orderly_number_coordinates = [
+                element_class.find('['), element_class.find(']')]
+            element_orderly_number = int(
+                element_class[element_orderly_number_coordinates[0]+1:element_orderly_number_coordinates[1]])
+            element_class = element_class.replace(
+                f'[{element_orderly_number}]', '')
 
         return element_class.strip(), element_orderly_number
 
@@ -95,10 +102,13 @@ class BookParser:
 
         for element_path in element_full_path:
             element_selector_end = element_path.find(" ")
-            element_selector = element_path[1:element_selector_end-1] if element_selector_end != -1 else element_path[1:-1]
-            element_class = element_path[element_selector_end:].strip() if element_selector_end != -1 else ""
+            element_selector = element_path[1:element_selector_end -
+                                            1] if element_selector_end != -1 else element_path[1:-1]
+            element_class = element_path[element_selector_end:].strip(
+            ) if element_selector_end != -1 else ""
 
-            element_class, element_orderly_number = self._get_element_orderly_number(element_class)
+            element_class, element_orderly_number = self._get_element_orderly_number(
+                element_class)
 
             optional = False
             if element_class.find('`OP') != -1:
@@ -109,13 +119,13 @@ class BookParser:
                 if element_class == '':
                     element = element.find_all(element_selector)
                 else:
-                    element = element.find_all(element_selector, class_=element_class)
-                
+                    element = element.find_all(
+                        element_selector, class_=element_class)
+                    
                 element = element[element_orderly_number]
             except:
                 if optional:
                     return None
-
 
         return element
 

@@ -75,13 +75,15 @@ class BookIndexView(generic.DetailView):
         author = 'None'
         if website.book_author_path != '':
             author = parser.get_element_text(website.book_author_path)
-            print(author)
-            print('author'*10)
-        print(website.book_author_path)
-        print('author'*10)
+
+        tags = 'None'
+        if website.book_tags_path != '':
+            tags = parser.get_elements_text(website.book_tags_path)
 
         context['description_en'] = description_en
         context['author'] = author
+        context['tags'] = tags
+
         return context
 
 
@@ -223,12 +225,16 @@ class WebsiteUpdateView(generic.UpdateView):
         website = self.get_object()
         book_description_path = request.POST.get('bookDescriptionPath')
         book_author_path = request.POST.get('bookAuthorPath')
+        book_tags_path = request.POST.get('bookTagsPath')
 
         if book_description_path is not None:
             website.book_description_path = book_description_path
 
         if book_author_path is not None:
             website.book_author_path = book_author_path
+
+        if book_tags_path is not None:
+            website.book_tags_path = book_tags_path
 
         website.save()
 

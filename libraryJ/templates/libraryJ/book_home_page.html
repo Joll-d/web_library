@@ -93,10 +93,10 @@
                     <div class="row mx-0 gx-0 gy-0 h-25">
                         <div class="col-md-9 border-bottom border-secondary border-opacity-50 shadow-risen">
                             <div class="text-center w-100 h-100">
-                                <div class="row mx-0 gx-0 gy-0 h-50 text-center text-dark-emphasis">
+                                <div class="row mx-0 gx-0 gy-0 h-50 text-center text-white text-opacity-50">
                                     <h1 id="bookTitle">{{ book.book_title }}</h1>
                                 </div>
-                                <div class="row mx-0 gx-0 gy-0 h-50 text-center text-dark-emphasis">
+                                <div class="row mx-0 gx-0 gy-0 h-50 text-center text-white text-opacity-50">
                                     {% if author == 'None' %}
                                     <button id="openAddModal" class="btn btn-outline-warning rounded-2 h-100"
                                         data-bs-toggle="modal" data-bs-target="#addModal" data-variable-name="author"
@@ -123,14 +123,14 @@
                             <div id="bookDescription">
                                 {% if description_en == 'None' %}
                                 <div class="row mx-0 gx-0 gy-0 h-50"></div>
-                                <div class="row mx-0 gx-0 gy-0">
-                                    <button
-                                        class="btn btn-outline-warning rounded-circle offset-md-5 col-md-2 shadow-lg"
-                                        data-bs-toggle="modal" data-bs-target="#addModal"
-                                        data-variable-name="description" onclick="openAddModal(this)">
-                                        <h1>+</h1>
-                                    </button>
-                                </div>
+                                    <div class="row mx-0 gx-0 gy-0">
+                                        <button
+                                            class="btn btn-outline-warning rounded-circle offset-md-5 col-md-2 shadow-lg"
+                                            data-bs-toggle="modal" data-bs-target="#addModal"
+                                            data-variable-name="description" onclick="openAddModal(this)">
+                                            <h1>+</h1>
+                                        </button>
+                                    </div>
                                 <div class="row mx-0 gx-0 gy-0"></div>
                                 {% else %}
                                 {% for description_block_en in description_en %}
@@ -140,9 +140,29 @@
                             </div>
                         </div>
                         <div class="col-md-3 border-start border-secondary border-opacity-50 shadow-lg ">
-                            <div class="row mx-0 gx-0 gy-0 h-75">
+                            <div class="row mx-0 gx-0 gy-0 h-75 overflow-hidden px-2 pt-2">
                                 <div class="col">
-
+                                    {% if tags == 'None' %}
+                                        <div class="row mx-0 gx-0 gy-0 h-25"></div>
+                                            <div class="row mx-0 gx-0 gy-0">
+                                                <button id="openAddModal" class="btn btn-outline-warning rounded-2 offset-md-5 col-md-3"
+                                                    data-bs-toggle="modal" data-bs-target="#addModal" data-variable-name="tags"
+                                                    onclick="openAddModal(this)">
+                                                    <h3>+</h3>
+                                                </button>
+                                            </div>  
+                                        <div class="row mx-0 gx-0 gy-0"></div>
+                                    {% else %}
+                                    <div class="row row-cols-auto g-2">
+                                            {% for tag in tags %}
+                                            <div class="col text-white text-opacity-50">
+                                                <div class="bg-black bg-gradient rounded-2 px-1">
+                                                     {{ tag }} 
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                          </div>
+                                    {% endif %}
                                 </div>
                             </div>
                             <div class="row mx-2 gx-0 gy-0 h-25">
