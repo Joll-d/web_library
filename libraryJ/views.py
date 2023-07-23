@@ -11,6 +11,7 @@ from libraryJ.utils.database_handler import *
 from libraryJ.utils.parser import *
 from libraryJ.utils.translator import *
 from django.contrib import messages
+from django.utils import timezone
 
 
 class IndexView(generic.ListView):
@@ -19,7 +20,7 @@ class IndexView(generic.ListView):
 
     def get_queryset(self):
 
-        return Book.objects.all()
+        return Book.objects.all().order_by('-last_call_time')
 
 
 class AddBookView(generic.ListView):
@@ -65,14 +66,22 @@ class BookIndexView(generic.DetailView):
         chapter_link = book.last_page_link
         website = book.Website
 
+        book_title_link = get_book_title_link(chapter_link, website.book_title_page_length) + website.book_title_page_link_supplement
+        parser = BookParser(book_title_link)
         description_en = 'None'
         if website.book_description_path != '':
-            book_title_link = get_book_title_link(chapter_link, website.book_title_page_length) + website.book_title_page_link_supplement
-            parser = BookParser(book_title_link)
             description_en = parser.get_elements_text(website.book_description_path)
-            print(description_en)
+
+        author = 'None'
+        if website.book_author_path != '':
+            author = parser.get_element_text(website.book_author_path)
+            print(author)
+            print('author'*10)
+        print(website.book_author_path)
+        print('author'*10)
 
         context['description_en'] = description_en
+        context['author'] = author
         return context
 
 
@@ -123,6 +132,10 @@ class BookPageView(generic.DetailView):
 
         context['previous_chapter'] = previous_chapter
         context['next_chapter'] = next_chapter
+
+        book.last_call_time = timezone.now()
+        book.save()
+        
         return context
 
     def post(self, request, *args, **kwargs):
@@ -209,10 +222,16 @@ class WebsiteUpdateView(generic.UpdateView):
     def post(self, request, *args, **kwargs):
         website = self.get_object()
         book_description_path = request.POST.get('bookDescriptionPath')
+        book_author_path = request.POST.get('bookAuthorPath')
 
         if book_description_path is not None:
             website.book_description_path = book_description_path
 
+        if book_author_path is not None:
+            website.book_author_path = book_author_path
+
         website.save()
 
-        return redirect('../../')
+        referer_url = request.META.get('HTTP_REFERER', None)
+
+        return redirect(referer_url)

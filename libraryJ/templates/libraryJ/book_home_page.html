@@ -46,15 +46,31 @@
     }
 
     ::-webkit-scrollbar-track {
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
         border-radius: 10px;
     }
 
     ::-webkit-scrollbar-thumb {
         border-radius: 10px;
-        -webkit-box-shadow: inset 0 0 6px rgba(50,50,50,1); 
+        -webkit-box-shadow: inset 0 0 6px rgba(50, 50, 50, 1);
     }
 </style>
+
+<script>
+
+    function openAddModal(button) {
+        const addModal = document.getElementById('addModal');
+        const openModalButton = document.getElementById('openModalButton');
+
+        const bookVariablePathInput = document.getElementById('bookVariablePathInput');
+        const bookVariablePathInputLabel = document.getElementById('bookVariablePathInputLabel');
+        var variableName = button.dataset.variableName;
+        variableName = variableName.charAt(0).toUpperCase() + variableName.slice(1);
+        bookVariablePathInputLabel.textContent = variableName + ' path:';
+        bookVariablePathInput.name = 'book' + variableName + 'Path';
+
+    }
+</script>
 
 <div class="background top left"></div>
 
@@ -81,14 +97,22 @@
                                     <h1 id="bookTitle">{{ book.book_title }}</h1>
                                 </div>
                                 <div class="row mx-0 gx-0 gy-0 h-50 text-center text-dark-emphasis">
-                                    <h5 id="bookAuthor" class="text-decoration-underline">by 123</h4>
+                                    {% if author == 'None' %}
+                                    <button id="openAddModal" class="btn btn-outline-warning rounded-2 h-100"
+                                        data-bs-toggle="modal" data-bs-target="#addModal" data-variable-name="author"
+                                        onclick="openAddModal(this)">
+                                        <h3>+</h3>
+                                    </button>
+                                    {% else %}
+                                    <h5 id="bookAuthor" class="text-decoration-underline">by {{ author }}</h5>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-3 border-bottom border-secondary border-opacity-50 shadow-risen">
                             <div class="row mx-0 gx-0 gy-0 h-50">
                                 <div class="col-md-3 offset-md-9">
-                                    <button id="btnDelete" class="btn btn-outline-danger w-100 h-100 shadow-lg"
+                                    <button id="btnDelete" class="btn btn-outline-danger w-100 h-100 shadow-lg fs-4 overflow-hidden"
                                         data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal"> D </button>
                                 </div>
                             </div>
@@ -101,8 +125,9 @@
                                 <div class="row mx-0 gx-0 gy-0 h-50"></div>
                                 <div class="row mx-0 gx-0 gy-0">
                                     <button
-                                        class="btn btn-outline-warning rounded-circle offset-md-5 col-md-2 shadow-lg shadow-white"
-                                        data-bs-toggle="modal" data-bs-target="#addDesctiptionModal">
+                                        class="btn btn-outline-warning rounded-circle offset-md-5 col-md-2 shadow-lg"
+                                        data-bs-toggle="modal" data-bs-target="#addModal"
+                                        data-variable-name="description" onclick="openAddModal(this)">
                                         <h1>+</h1>
                                     </button>
                                 </div>
@@ -123,8 +148,8 @@
                             <div class="row mx-2 gx-0 gy-0 h-25">
                                 <div class="col">
                                     <a href="chapter">
-                                        <button id="btnReading" class="btn btn-outline-primary w-100 h-100">
-                                            <h1>Reading</h2>
+                                        <button id="btnReading" class="btn btn-outline-primary w-100 h-100 fs-1">
+                                            Reading
                                         </button>
                                     </a>
                                 </div>
@@ -162,18 +187,18 @@
         </div>
     </div>
 
-    <div class="modal fade" id="addDesctiptionModal" tabindex="-1" aria-labelledby="addDesctiptionModalLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content text-white border border-black bg-secondary">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="addDesctiptionModalLabel">Add</h1>
+                    <h1 class="modal-title fs-5" id="addModalLabel">Add</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form method="post" action="../../website/{{book.Website.pk}}/update">{% csrf_token %}
                     <div class="modal-body">
-                        <label for="bookDescriptionPathInput" class="form-label text-light">Description path:</label>
-                        <input type="text" class="form-control" id="bookDescriptionPathInput" name="bookDescriptionPath"
+                        <label id="bookVariablePathInputLabel" for="bookDescriptionPathInput"
+                            class="form-label text-light">Description path:</label>
+                        <input type="text" class="form-control" id="bookVariablePathInput" name="bookDescriptionPath"
                             maxlength="200" required>
                     </div>
                     <div class="modal-footer">

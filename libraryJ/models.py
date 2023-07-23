@@ -5,7 +5,8 @@ class Website(models.Model):
     website_link = models.CharField(max_length=200, unique=True)
     image_link = models.CharField(max_length=200, default='')
     book_title_page_link_supplement = models.CharField(max_length=200, default='')
-
+    
+    book_author_path = models.CharField(max_length=200, default='')
     book_title_path = models.CharField(max_length=200)
     chapter_title_path = models.CharField(max_length=200)
 
