@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.postgres.fields import ArrayField
 
 class Website(models.Model):
     name = models.CharField(max_length=200, unique=True)
@@ -28,7 +29,12 @@ class Website(models.Model):
 
 class Book(models.Model):
     Website = models.ForeignKey(Website, on_delete=models.CASCADE)
+
     book_title = models.CharField(max_length=200)
+    author = models.CharField(max_length=200, default='')
+    tags = ArrayField(models.CharField(max_length=50), blank=True, default=list)
+    description = ArrayField(models.CharField(max_length=5000), blank=True, default=list)
+
     book_link = models.CharField(max_length=200)
     last_page_link = models.CharField(max_length=200)
     art_link = models.CharField(max_length=200)
