@@ -8,57 +8,42 @@ class BookParser:
 
     def __init__(self, website_link) -> None:
         self._website_link = website_link
+        self._page_html = self._get_page_html()
 
     def get_website_icon_src(self) -> str:
-        r = requests.get(self._website_link)
-        soup = BS(r.text, 'html.parser')
-        icon_link = soup.find("link", rel="shortcut icon")
+        icon_link = self._page_html.find("link", rel="shortcut icon")
         if icon_link is None:
-            icon_link = soup.find("link", rel="icon")
+            icon_link = self._page_html.find("link", rel="icon")
         website_image_src = self._get_full_url(icon_link.get("href"))
         return website_image_src
 
-    def get_website_status_code(self) -> int:
+    def get_website_status_code(self) -> tuple[int, requests.Response]:
         try:
-            r = requests.get(self._website_link)
-            status_code = r.status_code
+            request = requests.get(self._website_link)
+            status_code = request.status_code
         except:
             status_code = 404
-        return status_code
+        return status_code, request
 
     def get_element_text(self, book_title_path: str) -> str:
         book_title_path = book_title_path.split(";")
 
-        r = requests.get(self._website_link)
-        detected_encoding = chardet.detect(r.content)["encoding"]
-        r.encoding = detected_encoding
-        html = BS(r.text, 'html.parser')
-
-        element = self._get_element_by_path(html, book_title_path)
+        element = self._get_element_by_path(self._page_html, book_title_path)
 
         return element.text
 
     def get_element_src(self, element_path: str) -> str:
         element_path = element_path.split(";")
 
-        r = requests.get(self._website_link)
-        detected_encoding = chardet.detect(r.content)["encoding"]
-        r.encoding = detected_encoding
-        html = BS(r.text, 'html.parser')
-
-        element = self._get_element_by_path(html, element_path)
+        element = self._get_element_by_path(self._page_html, element_path)
 
         return element.get('src')
 
     def get_elements_text(self, parent_element_path: str) -> list:
         parent_element_path = parent_element_path.split(";")
 
-        r = requests.get(self._website_link)
-        detected_encoding = chardet.detect(r.content)["encoding"]
-        r.encoding = detected_encoding
-        html = BS(r.text, 'html.parser')
-
-        elements = self._get_element_by_path(html, parent_element_path)
+        elements = self._get_element_by_path(
+            self._page_html, parent_element_path)
 
         try:
             content = list(elements.stripped_strings)
@@ -70,12 +55,7 @@ class BookParser:
     def get_element_href(self, element_href_path: str) -> str:
         element_href_path = element_href_path.split(";")
 
-        r = requests.get(self._website_link)
-        detected_encoding = chardet.detect(r.content)["encoding"]
-        r.encoding = detected_encoding
-        html = BS(r.text, 'html.parser')
-
-        element = self._get_element_by_path(html, element_href_path)
+        element = self._get_element_by_path(self._page_html, element_href_path)
 
         if element is None:
             return element
@@ -121,7 +101,7 @@ class BookParser:
                 else:
                     element = element.find_all(
                         element_selector, class_=element_class)
-                    
+
                 element = element[element_orderly_number]
             except:
                 if optional:
@@ -129,10 +109,19 @@ class BookParser:
 
         return element
 
-    def _get_full_url(self, shortened_url: str):
+    def _get_full_url(self, shortened_url: str) -> str:
         url = shortened_url
         if shortened_url.find('://') == -1:
             domain_start = self._website_link.find("://") + 3
             domain_end = self._website_link.find("/", domain_start)
             url = self._website_link[:domain_end] + shortened_url
         return url
+
+    def _get_page_html(self) -> BS:
+        status_code, request = self.get_website_status_code()
+        page_html = None
+        if status_code == 200:
+            detected_encoding = chardet.detect(request.content)["encoding"]
+            request.encoding = detected_encoding
+            page_html = BS(request.text, 'html.parser')
+        return page_html
