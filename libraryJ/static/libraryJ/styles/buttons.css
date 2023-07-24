@@ -1,0 +1,27 @@
+.btn-update {
+    background: url('../images/update-icon-green.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
+
+.btn-update:hover {
+    background: url('../images/update-icon-black.png') #198754;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
+
+.btn-delete {
+    background: url('../images/delete-icon-red.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
+
+.btn-delete:hover {
+    background: url('../images/delete-icon-black.png') #dc3545;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
