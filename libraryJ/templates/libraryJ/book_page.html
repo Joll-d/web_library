@@ -96,35 +96,46 @@
 <div class="background top left"></div>
 
 <div>
-    <div class="main-block container">
+    <div class="main-block container bg-black opacity-75">
         <div class="container-inner">
             <div class="book-menu top">
                 <div class="d-flex justify-content-center">
-                    <form method="post" action="{% url 'library:change-book-page' %}">
+                    <form method="post" action="{% url 'library:change-book-page' pk=book.pk %}">
+
                         {% csrf_token %}
+                        {% if next_chapter == 'None' %}
                         <input type="hidden" name="next_chapter" value="{{ previous_chapter }}">
                         <button type="submit" class="btn btn-outline-warning" style="width: 100px">Previous</button>
+                        {% else %}
+                        <input type="hidden" name="next_chapter" value="{{ previous_chapter }}">
+                        <button type="submit" class="btn btn-outline-warning" style="width: 100px" disabled>Previous</button>
+                        {% endif %}
                     </form>
                     <div style="width: 10px"></div>
-                    <a href="{% url 'library:index-book' %}">
+                    <a href="{% url 'library:index-book' pk=book.pk %}">
                         <button type="button" class="btn btn-outline-warning" style="width: 100px">Index</button>
                     </a>
                     <div style="width: 10px"></div>
-                    <form method="post" action="{% url 'library:change-book-page' %}">
+                    <form method="post" action="{% url 'library:change-book-page' pk=book.pk %}">
                         {% csrf_token %}
+                        {% if next_chapter == 'None' %}
                         <input type="hidden" name="next_chapter" value="{{ next_chapter }}">
                         <button type="submit" class="btn btn-outline-warning" style="width: 100px">Next</button>
+                        {% else %}
+                        <input type="hidden" name="next_chapter" value="{{ next_chapter }}">
+                        <button type="submit" class="btn btn-outline-warning" style="width: 100px" disabled>Next</button>
+                        {% endif %}
                     </form>
                 </div>
             </div>
 
             <div class="content-block">
-                <div class="page-title d-flex justify-content-center">     
+                <div class="page-title d-flex justify-content-center text-warning text-opacity-50 fs-1">     
                     {{ chapter_title }}
                 </div>
                 {% for paragraph_en, paragraph_ru in chapter_content %}
                     <div onclick="translateParagraph('{{ paragraph_en|escapejs|safe }}', '{{ paragraph_ru|escapejs|safe }}', '{{ forloop.counter }}')">
-                        <p id="paragraph{{ forloop.counter }}" class="content-text en">
+                        <p id="paragraph{{ forloop.counter }}" class="content-text text-opacity-75 text-warning fs-4 en">
                             {{ paragraph_en }}
                         </p>
                     </div>
@@ -134,20 +145,31 @@
 
             <div class="book-menu bottom">
                 <div class="d-flex justify-content-center">
-                    <form method="post" action="{% url 'library:change-book-page' %}">
+                    <form method="post" action="{% url 'library:change-book-page' pk=book.pk %}">
+
                         {% csrf_token %}
+                        {% if next_chapter == 'None' %}
                         <input type="hidden" name="next_chapter" value="{{ previous_chapter }}">
                         <button type="submit" class="btn btn-outline-warning" style="width: 100px">Previous</button>
+                        {% else %}
+                        <input type="hidden" name="next_chapter" value="{{ previous_chapter }}">
+                        <button type="submit" class="btn btn-outline-warning" style="width: 100px" disabled>Previous</button>
+                        {% endif %}
                     </form>
                     <div style="width: 10px"></div>
-                    <a href="{% url 'library:index-book' %}">
+                    <a href="{% url 'library:index-book' pk=book.pk %}">
                         <button type="button" class="btn btn-outline-warning" style="width: 100px">Index</button>
                     </a>
                     <div style="width: 10px"></div>
-                    <form method="post" action="{% url 'library:change-book-page' %}">
+                    <form method="post" action="{% url 'library:change-book-page' pk=book.pk %}">
                         {% csrf_token %}
+                        {% if next_chapter == 'None' %}
                         <input type="hidden" name="next_chapter" value="{{ next_chapter }}">
                         <button type="submit" class="btn btn-outline-warning" style="width: 100px">Next</button>
+                        {% else %}
+                        <input type="hidden" name="next_chapter" value="{{ next_chapter }}">
+                        <button type="submit" class="btn btn-outline-warning" style="width: 100px" disabled>Next</button>
+                        {% endif %}
                     </form>
                 </div>
             </div>

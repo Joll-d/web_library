@@ -104,6 +104,9 @@ class BookParser:
                 else:
                     element = element.find_all(
                         element_selector, class_=element_class)
+                    print('`'*1000)
+                    print(element)
+                    print(element_selector, element_class)
 
                 element = element[element_orderly_number]
             except:
