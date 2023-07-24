@@ -20,9 +20,10 @@ def get_book_title_page_link_supplement(book_title_page_link: str, book_chapter_
     splited_book_chapter_page_link = book_chapter_page_link.split("/")
 
     last_title_part_of_chapter_page_link = splited_book_title_page_link[len(splited_book_title_page_link)-1]
-    last_part_of_title_page_link = splited_book_chapter_page_link[:len(splited_book_title_page_link)]
+    last_part_of_title_page_link = splited_book_chapter_page_link[len(splited_book_title_page_link)-1]
 
     book_title_page_link_supplement = last_title_part_of_chapter_page_link[len(last_part_of_title_page_link):]
+
     return book_title_page_link_supplement
 
 

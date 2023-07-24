@@ -98,12 +98,30 @@
         bookVariablePathInput.name = 'book' + variableName + 'Path';
 
     }
+
+    function handleError(image){
+        setBorder(image.parentNode);
+        setOpacity50(image.parentNode);
+        hide(image);
+    }
+
+    function setBorder(element){
+        element.classList.add('border','border-white');
+    }
+
+    function setOpacity50(element){
+        element.classList.add('opacity-50');
+    }
+
+    function hide(element){
+        element.classList.add('d-none');
+    }
 </script>
 
 <div class="background top left"></div>
 
 <div>
-    <a href="../../">
+    <a href="{% url 'library:index-library' %}">
         <div class="buttons-menu top left rounded-end-3 btn btn-dark shadow-lg">
             &lt;
         </div>
@@ -113,8 +131,8 @@
         <div class="container-inner overflow-hidden">
             <div class="row mx-0 gx-0 gy-0 h-50">
                 <div id="bookImage" class="col-3">
-                    <div class="container-fluid ">
-                        <img class="container-fluid shadow" data-type="cover" src="{{ book.art_link }}" data-loaded="1">
+                    <div class="container-fluid" style="height: 400px;">
+                        <img class="container-fluid shadow h-100" data-type="cover" src="{{ book.iwmage_link }}" data-loaded="1" onerror="handleError(this)">
                     </div>
                 </div>
                 <div class="col">
@@ -122,7 +140,7 @@
                         <div class="col-md-9 border-bottom border-secondary border-opacity-50 shadow-risen">
                             <div class="text-center w-100 h-100">
                                 <div class="row mx-0 gx-0 gy-0 h-50 text-center text-white text-opacity-50">
-                                    <h1 id="bookTitle">{{ book.book_title }}</h1>
+                                    <h1 id="bookTitle">{{ book.title }}</h1>
                                 </div>
                                 <div class="row mx-0 gx-0 gy-0 h-50 text-center text-white text-opacity-50">
                                     {% if author == 'None' %}
@@ -140,7 +158,7 @@
                         <div class="col-md-3 border-bottom border-secondary border-opacity-50 shadow-risen">
                             <div class="row mx-0 gx-0 gy-0 h-50">
                                 <div class="col-md-3 offset-md-6">
-                                    <form method="post" action="update">{% csrf_token%}
+                                    <form method="post" action="{% url 'library:update-book' pk=book.pk%}">{% csrf_token%}
                                         {{ form }}
                                         <input type="submit" id="btnUpdate"
                                             class="btn btn-outline-success h-75 w-75 shadow-lg fs-4 overflow-hidden btn-update"
@@ -204,7 +222,7 @@
                             </div>
                             <div class="row mx-2 gx-0 gy-0 h-25">
                                 <div class="col">
-                                    <a href="chapter">
+                                    <a href="{% url 'library:book-page' pk=book.pk %}">
                                         <button id="btnReading" class="btn btn-outline-primary w-100 h-100 fs-1">
                                             Reading
                                         </button>
@@ -227,7 +245,7 @@
                     <h1 class="modal-title fs-5" id="deleteConfirmationModalLabel">Delete Confirmation</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form method="post" action="delete">{% csrf_token %}
+                <form method="post" action="{% url 'library:delete-book' pk=book.pk%}">{% csrf_token %}
                     <div class="modal-body">
                         <p>Are you sure you want to delete "{{ book.book_title }}" id: "{{ book.pk }}"?</p>
                         <p>Enter: I am sure</p>
@@ -251,7 +269,7 @@
                     <h1 class="modal-title fs-5" id="addModalLabel">Add</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form method="post" action="../../website/{{book.Website.pk}}/update">{% csrf_token %}
+                <form method="post" action="{% url 'library:update-website' pk=book.Website.pk%}">{% csrf_token %}
                     <div class="modal-body">
                         <label id="bookVariablePathInputLabel" for="bookDescriptionPathInput"
                             class="form-label text-light">Description path:</label>

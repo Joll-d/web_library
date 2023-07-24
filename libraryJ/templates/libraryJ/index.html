@@ -39,7 +39,7 @@
 <div class="background top left"></div>
 
 <div>
-    <a href="add-book">
+    <a href="book/create">
         <div class="buttons-menu top right">
             +
         </div>
@@ -49,10 +49,10 @@
 
             <div class="bookshelf" onwheel="scrollBookshelf(event)">
                 {% for book in books %}
-                    <a href="book/{{ book.id }}">
+                    <a href="{% url 'library:index-book' pk=book.pk %}">
                         <div class="book">
-                            <img src="{{ book.art_link }}" style="height: 100%; width: 100%;">
-                            <div class="book-title">{{ book.book_title }}</div>
+                            <img src="{{ book.image_link }}" style="height: 100%; width: 100%;">
+                            <div class="book-title">{{ book.title }}</div>
                         </div>
                     </a>
                 {% endfor %}

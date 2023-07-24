@@ -98,6 +98,9 @@ class BookParser:
             try:
                 if element_class == '':
                     element = element.find_all(element_selector)
+                    print('`'*1000)
+                    print(element)
+                    print(element_selector, element_class)
                 else:
                     element = element.find_all(
                         element_selector, class_=element_class)
