@@ -4,12 +4,15 @@
 <link rel="stylesheet" href="{% static 'libraryJ/styles/containers.css' %}">
 <link rel="stylesheet" href="{% static 'libraryJ/styles/main.css' %}">
 
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+
 <script src="{% static 'libraryJ/js/bookshelf.js' %}"></script>
 
 <style>
     .background {
         z-index: -1;
-        position: absolute;
+        position: fixed;
         background-image: url('{% static "libraryJ/images/background_image.jpg" %}');
         background-size: cover;
         height: 100vh;
@@ -46,27 +49,62 @@
             +
         </div>
     </a>
-    <div class="main-block container" style="height: 80%">
-        <div class="container-inner">
+    <div class="main-block container">
+        <div class="container-inner container-fluid overflow-y-hidden align-middle">
+            <div class="row mx-0 gx-0 gy-0" style="height: 75vh">
 
-            <div class="bookshelf" onwheel="scrollBookshelf(event)">
-                {% for book in books %}
-                    <a href="{% url 'library:index-book' pk=book.pk %}">
-                        <div class="book">
-                            <img src="{{ book.image_link }}" style="height: 100%; width: 100%;">
-                            <div class="book-title">{{ book.title }}</div>
+                <div class="row w-100 mx-0 gx-0 gy-0" style="height: 30%;">
+                    <div class="row w-100 mx-0 gx-0 gy-0" style="height: 5%;"></div>
+                        <div class="row mx-0 gx-0 gy-0 h-100">
+                        <div class="h-100 w-100 bg-black bg-gradient bg-opacity-75 rounded-3 bookshelf mx-0 gx-0 gy-0" onwheel="scrollBookshelf(event)">
+                            {% for book in books %}
+                                <a href="{% url 'library:index-book' pk=book.pk %}">
+                                    <div class="book h-100">
+                                        <img src="{{ book.image_link }}" style="height: 100%; width: auto;">
+                                        <div class="book-title">{{ book.title }}</div>
+                                    </div>
+                                </a>
+                            {% endfor %}
                         </div>
-                    </a>
-                {% endfor %}
-            </div>
+                        </div>
+                    <div class="row mx-0 gx-0 gy-0" style="height: 5%;"></div>
+                </div>
+                
+                <div class="row w-100 mx-0 gx-0 gy-0" style="height: 30%;">
+                    <div class="row w-100 mx-0 gx-0 gy-0" style="height: 5%;"></div>
+                        <div class="row mx-0 gx-0 gy-0 h-100">
+                        <div class="h-100 w-100 bg-black bg-gradient bg-opacity-75 rounded-3 bookshelf mx-0 gx-0 gy-0" onwheel="scrollBookshelf(event)">
+                            {% for book in books %}
+                                <a href="{% url 'library:index-book' pk=book.pk %}">
+                                    <div class="book h-100">
+                                        <img src="{{ book.image_link }}" style="height: 100%; width: auto;">
+                                        <div class="book-title">{{ book.title }}</div>
+                                    </div>
+                                </a>
+                            {% endfor %}
+                        </div>
+                        </div>
+                    <div class="row mx-0 gx-0 gy-0" style="height: 5%;"></div>
+                </div>
 
-            <div class="bookshelf">
-                <!-- Add content for the second block here -->
-            </div>
-
-            <div class="bookshelf">
-                <!-- Add content for the third block here -->
+                <div class="row w-100 mx-0 gx-0 gy-0" style="height: 30%;">
+                    <div class="row w-100 mx-0 gx-0 gy-0" style="height: 5%;"></div>
+                        <div class="row mx-0 gx-0 gy-0 h-100">
+                        <div class="h-100 w-100 bg-black bg-gradient bg-opacity-75 rounded-3 bookshelf mx-0 gx-0 gy-0" onwheel="scrollBookshelf(event)">
+                            {% for book in books %}
+                                <a href="{% url 'library:index-book' pk=book.pk %}">
+                                    <div class="book h-100">
+                                        <img src="{{ book.image_link }}" style="height: 100%; width: auto;">
+                                        <div class="book-title">{{ book.title }}</div>
+                                    </div>
+                                </a>
+                            {% endfor %}
+                        </div>
+                        </div>
+                    <div class="row mx-0 gx-0 gy-0" style="height: 5%;"></div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+            

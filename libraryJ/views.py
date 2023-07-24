@@ -140,7 +140,7 @@ class BookUpdateView(generic.DetailView):
 
 class BookDeleteView(generic.DetailView):
     model = Book
-    success_url = reverse_lazy('library:library')
+    success_url = reverse_lazy('library:index-library')
 
     def post(self, request, *args, **kwargs):
         book = self.get_object()
@@ -148,7 +148,7 @@ class BookDeleteView(generic.DetailView):
         if confirmation == 'I am sure':
             book.delete()
 
-        return redirect(reverse_lazy('library:library'))
+        return redirect(reverse_lazy('library:index-library'))
     
 
 class BookPageView(generic.DetailView):
