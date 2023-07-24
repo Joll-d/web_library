@@ -1,3 +1,4 @@
+from django.forms.models import BaseModelForm
 from django.urls import reverse_lazy
 from django.views import generic
 from django.http import HttpResponse
@@ -75,7 +76,7 @@ class BookCreateView(generic.CreateView):
 
 class BookIndexView(generic.DetailView):
     model = Book
-    template_name = 'libraryJ/book_home_page.html'
+    template_name = 'libraryJ/index_book.html'
     context_object_name = 'book'
 
     def get_context_data(self, **kwargs):
@@ -108,8 +109,7 @@ class BookDeleteView(generic.DetailView):
 
 class BookUpdateView(generic.DetailView):
     model = Book
-    fields = ["book_title", "art_link", "author", "tags", "description"]
-    template_name = "libraryJ/book_home_page.html"
+    template_name = "libraryJ/index_book.html"
 
     def post(self, request, *args, **kwargs):
         book = self.get_object()
@@ -276,29 +276,28 @@ class WebsiteUpdateView(generic.UpdateView):
         return redirect(reverse_lazy('library:index-website'))
 
 
-# class WebsiteUpdateView(generic.UpdateView, generic.DeleteView):
-#     model = Website
-#     form_class = WebsiteUpdateForm
-#     template_name = 'libraryJ/update_website.html'
-#     context_object_name = 'website'
+class WebsiteUpdateOneValView(generic.DetailView):
+    model = Website
+    template_name = 'libraryJ/update_website.html'
+    context_object_name = 'website'
 
-#     def post(self, request, *args, **kwargs):
-#         website = self.get_object()
-#         book_description_path = request.POST.get('bookDescriptionPath')
-#         book_author_path = request.POST.get('bookAuthorPath')
-#         book_tags_path = request.POST.get('bookTagsPath')
+    def post(self, request, *args, **kwargs):
+        website = self.get_object()
+        book_description_path = request.POST.get('bookDescriptionPath')
+        book_author_path = request.POST.get('bookAuthorPath')
+        book_tags_path = request.POST.get('bookTagsPath')
 
-#         if book_description_path is not None:
-#             website.book_description_path = book_description_path
+        if book_description_path is not None:
+            website.book_description_path = book_description_path
 
-#         if book_author_path is not None:
-#             website.book_author_path = book_author_path
+        if book_author_path is not None:
+            website.book_author_path = book_author_path
 
-#         if book_tags_path is not None:
-#             website.book_tags_path = book_tags_path
+        if book_tags_path is not None:
+            website.book_tags_path = book_tags_path
 
-#         website.save()
+        website.save()
 
-#         referer_url = request.META.get('HTTP_REFERER', None)
+        referer_url = request.META.get('HTTP_REFERER', None)
 
-#         return redirect(referer_url)
+        return redirect(referer_url)

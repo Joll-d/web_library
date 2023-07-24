@@ -62,7 +62,7 @@
         background-size: 100% 100%;
     }
 
-    .btn-update:hover{
+    .btn-update:hover {
         background: url("{% static 'libraryJ/images/update-icon-black.png' %}") #198754;
         background-position: center;
         background-repeat: no-repeat;
@@ -76,7 +76,7 @@
         background-size: 100% 100%;
     }
 
-    .btn-delete:hover{
+    .btn-delete:hover {
         background: url("{% static 'libraryJ/images/delete-icon-black.png' %}") #dc3545;
         background-position: center;
         background-repeat: no-repeat;
@@ -99,21 +99,21 @@
 
     }
 
-    function handleError(image){
+    function handleError(image) {
         setBorder(image.parentNode);
         setOpacity50(image.parentNode);
         hide(image);
     }
 
-    function setBorder(element){
-        element.classList.add('border','border-white');
+    function setBorder(element) {
+        element.classList.add('border', 'border-white');
     }
 
-    function setOpacity50(element){
+    function setOpacity50(element) {
         element.classList.add('opacity-50');
     }
 
-    function hide(element){
+    function hide(element) {
         element.classList.add('d-none');
     }
 </script>
@@ -132,7 +132,8 @@
             <div class="row mx-0 gx-0 gy-0 h-50">
                 <div id="bookImage" class="col-3">
                     <div class="container-fluid" style="height: 400px;">
-                        <img class="container-fluid shadow h-100" data-type="cover" src="{{ book.iwmage_link }}" data-loaded="1" onerror="handleError(this)">
+                        <img class="container-fluid shadow h-100" data-type="cover" src="{{ book.image_link }}"
+                            data-loaded="1" onerror="handleError(this)">
                     </div>
                 </div>
                 <div class="col">
@@ -158,7 +159,8 @@
                         <div class="col-md-3 border-bottom border-secondary border-opacity-50 shadow-risen">
                             <div class="row mx-0 gx-0 gy-0 h-50">
                                 <div class="col-md-3 offset-md-6">
-                                    <form method="post" action="{% url 'library:update-book' pk=book.pk%}">{% csrf_token%}
+                                    <form method="post" action="{% url 'library:update-book' pk=book.pk%}">{%
+                                        csrf_token%}
                                         {{ form }}
                                         <input type="submit" id="btnUpdate"
                                             class="btn btn-outline-success h-75 w-75 shadow-lg fs-4 overflow-hidden btn-update"
@@ -187,9 +189,11 @@
                                 </div>
                                 <div class="row mx-0 gx-0 gy-0"></div>
                                 {% else %}
-                                {% for description_block_en in description_en %}
-                                <p class="text-light ">{{ description_block_en }}</p>
-                                {% endfor %}
+                                <div id="description" class="px-2">
+                                    {% for description_block_en in description_en %}
+                                    <p class="text-light ">{{ description_block_en }}</p>
+                                    {% endfor %}
+                                </div>
                                 {% endif %}
                             </div>
                         </div>
@@ -269,7 +273,8 @@
                     <h1 class="modal-title fs-5" id="addModalLabel">Add</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form method="post" action="{% url 'library:update-website' pk=book.Website.pk%}">{% csrf_token %}
+                <form method="post" action="{% url 'library:update-one-val-website' pk=book.Website.pk%}">{% csrf_token
+                    %}
                     <div class="modal-body">
                         <label id="bookVariablePathInputLabel" for="bookDescriptionPathInput"
                             class="form-label text-light">Description path:</label>
