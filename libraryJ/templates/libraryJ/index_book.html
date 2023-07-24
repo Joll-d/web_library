@@ -159,8 +159,8 @@
                         <div class="col-md-3 border-bottom border-secondary border-opacity-50 shadow-risen">
                             <div class="row mx-0 gx-0 gy-0 h-50">
                                 <div class="col-md-3 offset-md-6">
-                                    <form method="post" action="{% url 'library:update-book' pk=book.pk%}">{%
-                                        csrf_token%}
+                                    <form method="post" action="{% url 'library:update-book' pk=book.pk%}">
+                                        {%csrf_token%}
                                         {{ form }}
                                         <input type="submit" id="btnUpdate"
                                             class="btn btn-outline-success h-75 w-75 shadow-lg fs-4 overflow-hidden btn-update"
