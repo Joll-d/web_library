@@ -16,11 +16,12 @@ urlpatterns = [
     path('book/create/', views.BookCreateView.as_view(), name='create-book'),
     path('book/<int:pk>/', views.BookIndexView.as_view(), name='index-book'),
     path('book/<int:pk>/update', views.BookUpdateView.as_view(), name='update-book'),
+    path('book/<int:pk>/delete', views.BookDeleteView.as_view(),
+         name='delete-book'),
+         
     path('book/<int:pk>/chapter/', views.BookPageView.as_view(), name='book-page'),
     path('book/<int:pk>/chapter/change-book-page',
          views.BookPageView.as_view(), name='change-book-page'),
-    path('book/<int:pk>/delete', views.BookDeleteView.as_view(),
-         name='delete-book'),
 
     path('', views.IndexView.as_view(), name='index-library'),
 ]

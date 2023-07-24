@@ -26,6 +26,26 @@ class IndexView(generic.ListView):
         return Book.objects.all().order_by('-last_call_time')
 
 
+class BookIndexView(generic.DetailView):
+    model = Book
+    template_name = 'libraryJ/index_book.html'
+    context_object_name = 'book'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        book = self.get_object()
+
+        description_en = book.description
+        author = book.author
+        tags = book.tags
+
+        context['description_en'] = description_en
+        context['author'] = author
+        context['tags'] = tags
+
+        return context
+
+
 class BookCreateView(generic.CreateView):
     model = Book
     template_name = 'libraryJ/create_book.html'
@@ -74,39 +94,6 @@ class BookCreateView(generic.CreateView):
             return redirect(reverse_lazy('library:index-library'))
 
 
-class BookIndexView(generic.DetailView):
-    model = Book
-    template_name = 'libraryJ/index_book.html'
-    context_object_name = 'book'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        book = self.get_object()
-
-        description_en = book.description
-        author = book.author
-        tags = book.tags
-
-        context['description_en'] = description_en
-        context['author'] = author
-        context['tags'] = tags
-
-        return context
-
-
-class BookDeleteView(generic.DetailView):
-    model = Book
-    success_url = '../'
-
-    def post(self, request, *args, **kwargs):
-        book = self.get_object()
-        confirmation = request.POST.get('deleteConfirmation')
-        if confirmation == 'I am sure':
-            book.delete()
-
-        return redirect('../../')
-
-
 class BookUpdateView(generic.DetailView):
     model = Book
     template_name = "libraryJ/index_book.html"
@@ -151,6 +138,19 @@ class BookUpdateView(generic.DetailView):
         return redirect(reverse_lazy('library:index-book', kwargs={'pk': self.kwargs['pk']}))
 
 
+class BookDeleteView(generic.DetailView):
+    model = Book
+    success_url = reverse_lazy('library:library')
+
+    def post(self, request, *args, **kwargs):
+        book = self.get_object()
+        confirmation = request.POST.get('deleteConfirmation')
+        if confirmation == 'I am sure':
+            book.delete()
+
+        return redirect(reverse_lazy('library:library'))
+    
+
 class BookPageView(generic.DetailView):
     model = Book
     template_name = 'libraryJ/book_page.html'
@@ -161,6 +161,12 @@ class BookPageView(generic.DetailView):
         book = self.get_object()
         chapter_link = book.last_chapter_link
         website = book.Website
+
+        print('`'*250)
+        print(chapter_link)
+        print(book.last_chapter_link)
+        print(book)
+
 
         parser = BookParser(chapter_link)
         chapter_title = parser.get_element_text(website.chapter_title_path)
@@ -194,13 +200,13 @@ class BookPageView(generic.DetailView):
     def post(self, request, *args, **kwargs):
         book = self.get_object()
 
-        book_link = request.POST.get("next_chapter")
+        book_link = request.POST.get("chapter_link")
 
         if book_link != 'None':
-            book.last_page_link = book_link
+            book.last_chapter_link = book_link
             book.save()
 
-        return redirect(f"../chapter")
+        return redirect(reverse_lazy('library:book-page', kwargs={'pk': book.pk}))
 
 
 class WebsiteView(generic.ListView):
