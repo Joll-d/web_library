@@ -90,10 +90,10 @@
         <div class="container-inner">
             <div class="book-menu top">
                 <div class="d-flex justify-content-center">
-                    <form method="post" action="{% url 'library:change-book-page' pk=book.pk %}">
+                    <form method="post" action="{% url 'library:book-page' pk=book.pk chapter_pk=previous_chapter %}">
 
                         {% csrf_token %}
-                        {% if previous_chapter is None %}
+                        {% if previous_chapter is 0 %}
                             <input type="hidden" name="chapter_link" value="{{ previous_chapter }}">
                             <button type="submit" class="btn btn-outline-warning" style="width: 100px" disabled>Previous</button>
                         {% else %}
@@ -107,10 +107,10 @@
                         <button type="button" class="btn btn-outline-warning" style="width: 100px">Index</button>
                     </a>
                     <div style="width: 10px"></div>
-                    <form method="post" action="{% url 'library:change-book-page' pk=book.pk %}">
+                    <form method="post" action="{% url 'library:book-page' pk=book.pk chapter_pk=next_chapter %}">
 
                         {% csrf_token %}
-                        {% if next_chapter is None %}
+                        {% if next_chapter is 0 %}
                             <input type="hidden" name="chapter_link" value="{{ next_chapter }}">
                             <button type="submit" class="btn btn-outline-warning" style="width: 100px" disabled>Next</button>
                         {% else %}
@@ -138,10 +138,10 @@
 
             <div class="book-menu bottom">
                 <div class="d-flex justify-content-center">
-                    <form method="post" action="{% url 'library:change-book-page' pk=book.pk %}">
+                    <form method="post" action="{% url 'library:book-page' pk=book.pk chapter_pk=previous_chapter %}">
 
                         {% csrf_token %}
-                        {% if previous_chapter is None %}
+                        {% if previous_chapter is 0 %}
                             <input type="hidden" name="chapter_link" value="{{ previous_chapter }}">
                             <button type="submit" class="btn btn-outline-warning" style="width: 100px" disabled>Previous</button>
                         {% else %}
@@ -155,10 +155,10 @@
                         <button type="button" class="btn btn-outline-warning" style="width: 100px">Index</button>
                     </a>
                     <div style="width: 10px"></div>
-                    <form method="post" action="{% url 'library:change-book-page' pk=book.pk %}">
+                    <form method="post" action="{% url 'library:book-page' pk=book.pk chapter_pk=next_chapter %}">
 
                         {% csrf_token %}
-                        {% if next_chapter is None %}
+                        {% if next_chapter is 0 %}
                             <input type="hidden" name="chapter_link" value="{{ next_chapter }}">
                             <button type="submit" class="btn btn-outline-warning" style="width: 100px" disabled>Next</button>
                         {% else %}

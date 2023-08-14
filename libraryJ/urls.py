@@ -19,9 +19,7 @@ urlpatterns = [
     path('book/<int:pk>/delete', views.BookDeleteView.as_view(),
          name='delete-book'),
          
-    path('book/<int:pk>/chapter/', views.BookPageView.as_view(), name='book-page'),
-    path('book/<int:pk>/chapter/change-book-page',
-         views.BookPageView.as_view(), name='change-book-page'),
+    path('book/<int:pk>/chapter/<int:chapter_pk>/', views.BookPageView.as_view(), name='book-page'),
 
     path('', views.IndexView.as_view(), name='index-library'),
 ]

@@ -187,7 +187,7 @@
                             </div>
                             <div class="row mx-2 gx-0 gy-0 h-25">
                                 <div class="col">
-                                    <a href="{% url 'library:book-page' pk=book.pk %}">
+                                    <a href="{% url 'library:book-page' pk=book.pk chapter_pk=book.last_chapter %}">
                                         <button id="btnReading" class="btn btn-outline-primary w-100 h-100 fs-1">
                                             Reading
                                         </button>

@@ -15,14 +15,13 @@ from libraryJ.utils.translator import *
 from django.contrib import messages
 from django.utils import timezone
 from .forms import *
-
+import threading
 
 class IndexView(generic.ListView):
     template_name = 'libraryJ/index.html'
     context_object_name = 'books'
 
     def get_queryset(self):
-
         return Book.objects.all().order_by('-last_call_time')
 
 
@@ -80,17 +79,24 @@ class BookCreateView(generic.CreateView):
                 description = parser.get_elements_text(
                     website.book_description_path)
 
+            first_chapter_link = get_first_chapter_link(website, first_chapter_link)
+
             book = Book.objects.create(
                 Website=website,
                 title=title,
                 first_chapter_link=first_chapter_link,
-                last_chapter_link=first_chapter_link,
                 image_link=image_link,
 
                 author=author,
                 tags=tags,
                 description=description,
             )
+
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            loop.run_until_complete(create_chapters(book))
+            loop.close()
+
             return redirect(reverse_lazy('library:index-library'))
 
 
@@ -156,41 +162,28 @@ class BookPageView(generic.DetailView):
     template_name = 'libraryJ/book_page.html'
     context_object_name = 'book'
 
+    def get(self, request, chapter_pk, *args, **kwargs):
+        self.chapter_pk = chapter_pk
+        return super().get(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        chapter_pk = self.chapter_pk
         book = self.get_object()
-        chapter_link = book.last_chapter_link
-        website = book.Website
+        chapter = Chapter.objects.filter(book=book, chapter_number=chapter_pk).first()
+        previous_chapter = Chapter.objects.filter(book=book, chapter_number=chapter_pk-1).first()
+        next_chapter = Chapter.objects.filter(book=book, chapter_number=chapter_pk+1).first()
 
-        print('`'*250)
-        print(chapter_link)
-        print(book.last_chapter_link)
-        print(book)
+        chapter_title_en = chapter.title
 
-
-        parser = BookParser(chapter_link)
-        chapter_title = parser.get_element_text(website.chapter_title_path)
-        chapter_content = parser.get_elements_text(website.book_content_path)
-
-        previous_chapter = parser.get_element_href(
-            website.previous_chapter_link_path)
-        next_chapter = parser.get_element_href(
-            website.next_chapter_link_path)
-
-        translator_en = Translator('en')
-        chapter_title_en = translator_en.translate(chapter_title)
-        chapter_content_en = translator_en.translate(chapter_content)
-
-        translator_ru = Translator('ru')
-
-        chapter_content_ru = translator_ru.translate(chapter_content)
-
+        chapter_content_en = chapter.content_en
+        chapter_content_ru = chapter.content_ru
         context['chapter_title'] = chapter_title_en
         context['chapter_content'] = zip(
             chapter_content_en, chapter_content_ru)
-
-        context['previous_chapter'] = previous_chapter
-        context['next_chapter'] = next_chapter
+        
+        context['previous_chapter'] = previous_chapter.chapter_number if previous_chapter else 0
+        context['next_chapter'] = next_chapter.chapter_number if next_chapter else 0
 
         book.last_call_time = timezone.now()
         book.save()
@@ -202,11 +195,11 @@ class BookPageView(generic.DetailView):
 
         book_link = request.POST.get("chapter_link")
 
-        if book_link != 'None':
+        if book_link != 0:
             book.last_chapter_link = book_link
             book.save()
 
-        return redirect(reverse_lazy('library:book-page', kwargs={'pk': book.pk}))
+        return redirect(reverse_lazy('library:book-page', kwargs={'pk': book.pk, 'chapter_pk': book_link}))
 
 
 class WebsiteView(generic.ListView):
