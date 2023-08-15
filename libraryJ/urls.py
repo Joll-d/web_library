@@ -10,6 +10,8 @@ urlpatterns = [
     path('website/', views.WebsiteView.as_view(), name='index-website'),
     path('website/<int:pk>/update',
          views.WebsiteUpdateView.as_view(), name='update-website'),
+    path('website/<int:pk>/update/info/<str:path>',
+         views.get_Parser_Data, name='get-Parser-Data'),
     path('website/<int:pk>/update-one-val',
          views.WebsiteUpdateOneValView.as_view(), name='update-one-val-website'),
 
@@ -18,8 +20,9 @@ urlpatterns = [
     path('book/<int:pk>/update', views.BookUpdateView.as_view(), name='update-book'),
     path('book/<int:pk>/delete', views.BookDeleteView.as_view(),
          name='delete-book'),
-         
-    path('book/<int:pk>/chapter/<int:chapter_pk>/', views.BookPageView.as_view(), name='book-page'),
+
+    path('book/<int:pk>/chapter/<int:chapter_pk>/',
+         views.BookPageView.as_view(), name='book-page'),
 
     path('', views.IndexView.as_view(), name='index-library'),
 ]

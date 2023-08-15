@@ -28,21 +28,21 @@ class BookParser:
     def get_element_text(self, book_title_path: str) -> str:
         book_title_path = book_title_path.split(";")
 
-        element = self._get_element_by_path(self._page_html, book_title_path)
+        element = self.get_element_by_path(self._page_html, book_title_path)
 
         return element.text
 
     def get_element_src(self, element_path: str) -> str:
         element_path = element_path.split(";")
 
-        element = self._get_element_by_path(self._page_html, element_path)
+        element = self.get_element_by_path(self._page_html, element_path)
 
         return element.get('src')
 
     def get_elements_text(self, parent_element_path: str) -> list:
         parent_element_path = parent_element_path.split(";")
 
-        elements = self._get_element_by_path(
+        elements = self.get_element_by_path(
             self._page_html, parent_element_path)
 
         try:
@@ -55,7 +55,7 @@ class BookParser:
     def get_element_href(self, element_href_path: str) -> str:
         element_href_path = element_href_path.split(";")
 
-        element = self._get_element_by_path(self._page_html, element_href_path)
+        element = self.get_element_by_path(self._page_html, element_href_path)
 
         if element is None:
             return element
@@ -76,7 +76,7 @@ class BookParser:
 
         return element_class.strip(), element_orderly_number
 
-    def _get_element_by_path(self, html: BS, element_full_path: list) -> BS:
+    def get_element_by_path(self, html: BS, element_full_path: list) -> BS:
         element = html
         element_full_path = [element.strip() for element in element_full_path]
 

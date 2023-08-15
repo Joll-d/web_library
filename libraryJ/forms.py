@@ -53,6 +53,13 @@ class WebsiteUpdateForm(forms.ModelForm, WebsiteUpdateExtraFields):
         self.fields['book_description_path'].required = False
         self.fields['book_title_page_link_supplement'].required = False
 
+        self.fields['book_title_path'].widget.attrs['onclick'] = 'getPreviewData(this.value)'
+        self.fields['chapter_title_path'].widget.attrs['onclick'] = 'getPreviewData(this.value)'
+        self.fields['book_content_path'].widget.attrs['onclick'] = 'getPreviewData(this.value)'
+        self.fields['next_chapter_link_path'].widget.attrs['onclick'] = 'getPreviewData(this.value)'
+        self.fields['previous_chapter_link_path'].widget.attrs['onclick'] = 'getPreviewData(this.value)'
+        self.fields['book_image_path'].widget.attrs['onclick'] = 'getPreviewData(this.value)'
+
     class Meta:
         model = Website
         fields = ['name', 'website_link', 'icon_link',

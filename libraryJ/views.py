@@ -2,6 +2,7 @@ from django.forms.models import BaseModelForm
 from django.urls import reverse_lazy
 from django.views import generic
 from django.http import HttpResponse
+from django.http import JsonResponse
 from django.template import loader
 from django.http import HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
@@ -300,3 +301,18 @@ class WebsiteUpdateOneValView(generic.DetailView):
         referer_url = request.META.get('HTTP_REFERER', None)
 
         return redirect(referer_url)
+
+
+def get_Parser_Data(request, pk, path):
+    website = get_object_or_404(Website, pk=pk)
+    book = Book.objects.filter(Website=website).first()
+    path = path.split(';')
+    parser = BookParser(book.first_chapter_link)
+    element = parser.get_element_by_path(parser._page_html, path)
+    
+    print(element)
+
+    data = {
+            'element': str(element)
+        }
+    return JsonResponse(data)

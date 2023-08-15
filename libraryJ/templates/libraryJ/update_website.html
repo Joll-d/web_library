@@ -8,7 +8,31 @@
       integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
 
 <script src="{% static 'libraryJ/js/bookshelf.js' %}"></script>
+<script>
+    function getPreviewData(path){
+        
+    const url = "http://localhost:8000/library/website/1/update/info/"+path;
 
+    const options = {
+        method: "GET", 
+        headers: {
+            "Content-Type": "application/json"
+        },
+    };
+
+    fetch(url, options)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Ошибка запроса: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Полученные данные:", data.element);
+            document.getElementById('previewConteiner').innerHTML = data.element;
+        })
+    }
+</script>
 <style>
     .background {
         z-index: -1;
@@ -95,7 +119,7 @@
     <div class="main-block container" style="height: 80%;">
         <div class="container-inner">
 
-            <div class="row overflow-y-auto h-100">
+            <div class="row h-100">
                 <div class="row overflow-y-auto" style="height: 10%;">
                     <div class="col-md-1">
                         <img src="{{website.icon_link}}" style="height: 100%; vertical-align: initial">
@@ -106,18 +130,25 @@
                 </div>
                 
                 <div class="form-conteiner text-light text-opacity-50 overflow-x-hidden px-2">
-                    <form method="post">{% csrf_token%}
-                        {{ form.as_p }}
-                        <div class="row">
-                            <div class="col"></div>
-                            <div class="col d-flex justify-content-center">
-                                <input type="submit" id="btnSubmit"
-                                    class="btn btn-outline-warning shadow-lg fs-4 overflow-hidden"
-                                    value="Submit">
-                            </div>
-                            <div class="col"></div>
+                    <div class="row">
+                        <div id="formConteiner" class="col-md-6 overflow-y-auto">
+                            <form method="post">{% csrf_token %}
+                                {{ form.as_p }}
+                                <div class="row">
+                                    <div class="col"></div>
+                                    <div class="col d-flex justify-content-center">
+                                        <input type="submit" id="btnSubmit"
+                                            class="btn btn-outline-warning shadow-lg fs-4 overflow-hidden"
+                                            value="Submit">
+                                    </div>
+                                    <div class="col"></div>
+                                </div>
+                            </form>
                         </div>
-                    </form>
+                        <div id="previewConteiner" class="col overflow-y-auto">
+                            {{ element_preview|safe }}
+                        </div>
+                    </div>
                 </div>
             </div>
 
